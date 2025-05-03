@@ -1,6 +1,14 @@
+import json
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import asyncio
+import time
+
+#設定ファイル読込
+with open('config.json','r',encoding='utf-8') as f:
+    config = json.load(f)
+
+SPREADSHEET_NAME = config['spreadsheet_name']
 
 # スプレッドシートの認証と取得
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -30,7 +38,6 @@ async def sync_users():
         print(f"{manage_data}")
         if manage_data:
             manage_ids = [str(row["ユーザーID"]) for row in manage_data]
-            print(f"管理シートのユーザーIDリスト: {manage_ids}")
         else:
             print("管理シートにデータがありませんが、処理を続行します。")
             manage_ids = []
@@ -39,7 +46,7 @@ async def sync_users():
         manage_ids = []
 
     for row in log_data:
-        user_id = str(row["ユーザーID"])
+        user_id = str(row["ユーザID"])
         username = row["ユーザー名"]
         
         if user_id not in manage_ids:
@@ -54,20 +61,25 @@ async def sync_users():
             row_index = len(manage_sheet.get_all_values())  # 新しく追加した行のインデックス
             print(f"書き込み行: {row_index}")
 
+            cell_list = manage_sheet.range(f"C{row_index}:F{row_index}")
+
             manage_sheet.update_cell(row_index, 3, f'=COUNTIFS(log!$A:$A,{user_id},log!$D:$D,"ログイン")')  # ログイン数
             manage_sheet.update_cell(row_index, 4, f'=COUNTIFS(log!$A:$A,{user_id},log!$D:$D,"募集作成")')  # 募集数
             manage_sheet.update_cell(row_index, 5, f'=SUMIFS(log!$G:$G,log!$A:$A,{user_id},log!$D:$D,"VC")')  # VC接続時間
             manage_sheet.update_cell(row_index, 7, f"=INT(C{row_index}*'設定'!B2+D{row_index}*'設定'!B3+E{row_index}*('設定'!B4/3600)+F{row_index})")  # 計算式
 
+            time.sleep(5)
+
             # 管理シートに追加後、manage_ids を再取得して更新
             manage_data = manage_sheet.get_all_records()  # 再度データを取得
             
-            manage_ids = [str(row["ユーザーID"]) for row in manage_data]  # 最新のユーザーIDリストを更新
+            manage_ids = [str(row["ユーザーID"]) for row in manage_data]  # 最新のユーザIDリストを更新
         else:
             print(f"ユーザー {user_id} は管理シートに既に存在します。")
 
 # メイン関数
 def main():
+    #asyncio.run(sync_users())             #これで実行すると、数式が文字列として書き込まれる
     loop = asyncio.get_event_loop()
     loop.run_until_complete(sync_users())  # 非同期関数を実行
 
