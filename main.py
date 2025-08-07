@@ -8,7 +8,7 @@ import time
 with open('config.json','r',encoding='utf-8') as f:
     config = json.load(f)
 
-SPREADSHEET_NAME = str(config['spreadsheet_name'])
+SPREADSHEET_NAME = str(config['spreadsheet_name']) # takat編集
 
 # スプレッドシートの認証と取得
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -16,7 +16,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('your-service-account.j
 client = gspread.authorize(creds)
 
 # スプレッドシートとシートの取得
-spreadsheet = client.open(SPREADSHEET_NAME) # Takat編集
+spreadsheet = client.open(SPREADSHEET_NAME) 
 log_sheet = spreadsheet.worksheet("log")
 manage_sheet = spreadsheet.worksheet("管理")
 settings_sheet = spreadsheet.worksheet("設定")
@@ -54,6 +54,7 @@ async def sync_users():
             username = row["ユーザー名"]
             # スプレッドシートに記入:関数式をセルに設定
             new_row = [user_id, username, "", "", "", "", "", "", ""] # takat 追記
+
             manage_sheet.append_row(new_row)
             print(f"管理シートに追加: {user_id}")
 
@@ -70,6 +71,7 @@ async def sync_users():
             manage_sheet.update_cell(row_index, 7, f"=INT(C{row_index}*'設定'!B2+D{row_index}*'設定'!B3+E{row_index}*('設定'!B4/3600)+F{row_index})")  # takat記載 獲得ポイント # 計算式
             manage_sheet.update_cell(row_index, 8, f"=SUMPRODUCT(IFERROR(VLOOKUP(FILTER(log!H:H, log!A:A=A{row_index}, log!D:D=\"消費\"), '交換品'!B:C, 2, FALSE), 0))") # takat記載 消費ポイント
             manage_sheet.update_cell(row_index, 9, f'=INT(G{row_index}-H{row_index})')  # takat記載 所持ポイント
+
 
             time.sleep(5)
 
