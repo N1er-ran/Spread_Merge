@@ -16,7 +16,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('your-service-account.j
 client = gspread.authorize(creds)
 
 # スプレッドシートとシートの取得
-spreadsheet = client.open(SPREADSHEET_NAME)
+spreadsheet = client.open(SPREADSHEET_NAME) # Takat編集
 log_sheet = spreadsheet.worksheet("log")
 manage_sheet = spreadsheet.worksheet("管理")
 settings_sheet = spreadsheet.worksheet("設定")
