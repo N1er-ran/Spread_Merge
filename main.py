@@ -8,7 +8,7 @@ import time
 with open('config.json','r',encoding='utf-8') as f:
     config = json.load(f)
 
-SPREADSHEET_NAME = str(config['spreadsheet_name']) # takat編集
+SPREADSHEET_NAME = str(config['spreadsheet_name']) # takat 編集
 
 # スプレッドシートの認証と取得
 scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
@@ -64,13 +64,13 @@ async def sync_users():
 
             cell_list = manage_sheet.range(f"C{row_index}:F{row_index}")
 
-            manage_sheet.update_cell(row_index, 3, f'=COUNTIFS(log!$A:$A,A{row_index},log!$D:$D,"ログイン")')  # takat記載 ログイン数
-            manage_sheet.update_cell(row_index, 4, f'=COUNTIFS(log!$A:$A,A{row_index},log!$D:$D,"募集作成")')  # takat記載 募集数
-            manage_sheet.update_cell(row_index, 5, f'=SUMIFS(log!$G:$G,log!$A:$A,A{row_index},log!$D:$D,"VC")')  # takat記載 VC接続時間
-            # takat記載 6 ボーナス
-            manage_sheet.update_cell(row_index, 7, f"=INT(C{row_index}*'設定'!B2+D{row_index}*'設定'!B3+E{row_index}*('設定'!B4/3600)+F{row_index})")  # takat記載 獲得ポイント # 計算式
-            manage_sheet.update_cell(row_index, 8, f"=SUMPRODUCT(IFERROR(VLOOKUP(FILTER(log!H:H, log!A:A=A{row_index}, log!D:D=\"消費\"), '交換品'!B:C, 2, FALSE), 0))") # takat記載 消費ポイント
-            manage_sheet.update_cell(row_index, 9, f'=INT(G{row_index}-H{row_index})')  # takat記載 所持ポイント
+            manage_sheet.update_cell(row_index, 3, f'=COUNTIFS(log!$A:$A,A{row_index},log!$D:$D,"ログイン")')  # takat 記載 ログイン数
+            manage_sheet.update_cell(row_index, 4, f'=COUNTIFS(log!$A:$A,A{row_index},log!$D:$D,"募集作成")')  # takat 記載 募集数
+            manage_sheet.update_cell(row_index, 5, f'=SUMIFS(log!$G:$G,log!$A:$A,A{row_index},log!$D:$D,"VC")')  # takat 記載 VC接続時間
+            # takat 記載 6 ボーナス
+            manage_sheet.update_cell(row_index, 7, f"=INT(C{row_index}*'設定'!B2+D{row_index}*'設定'!B3+E{row_index}*('設定'!B4/3600)+F{row_index})")  # takat 記載 獲得ポイント # 計算式
+            manage_sheet.update_cell(row_index, 8, f"=SUMPRODUCT(IFERROR(VLOOKUP(FILTER(log!H:H, log!A:A=A{row_index}, log!D:D=\"消費\"), '交換品'!B:C, 2, FALSE), 0))") # takat 記載 消費ポイント
+            manage_sheet.update_cell(row_index, 9, f'=INT(G{row_index}-H{row_index})')  # takat 記載 所持ポイント
 
 
             time.sleep(5)
